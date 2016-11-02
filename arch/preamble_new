@@ -14,15 +14,6 @@ DEVTOP          =       `pwd`
 LIBINCLUDE      =       .
 .SUFFIXES: .F .i .o .f90 .c
 
-#### Get core settings from environment (set in compile script)
-#### Note to add a core, this has to be added to.
-
-COREDEFS = CONFIGURE_EM_CORE \
-           CONFIGURE_NMM_CORE -DNMM_MAX_DIM=2600 \
-	   CONFIGURE_COAMPS_CORE \
-	   CONFIGURE_DA_CORE \
-           CONFIGURE_EXP_CORE
-
 #### Single location for defining total number of domains.  You need
 #### at least 1 + 2*(number of total nests).  For example, 1 coarse
 #### grid + three fine grids = 1 + 2(3) = 7, so MAX_DOMAINS=7.

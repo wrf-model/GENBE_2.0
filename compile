@@ -5,33 +5,11 @@ setenv START_OF_COMPILE "`date`"
 cont1:
 
 if ( !  -e configure.gen_be  ) then
-   if ( $1 == "all_wrfvar" ) then
-      ./configure wrfda
-      set dontask
-   else
-      ./configure $1
-      set dontask
-   endif
-endif
-
-
-if ( ! $?dontask && $?prompt ) then
   echo "This script assumes you have configured the code already."
-  echo "You only need to configure once."
-  echo "If you wish to reconfigure, type c at the prompt below"
-  echo " "
-  echo "Ready to compile? [ync]"
-  set resp=$<
-
-  if ( "$resp" == "c" ) then
-    ./configure
-    goto cont1
-  endif
-
-  if ( "$resp" == "n" ) then
-    exit 2
-  endif
+  echo "Run the configure script before continuing."
+  exit 1
 endif
+
 
 set arglist=""
 foreach a ( $argv )
@@ -40,20 +18,6 @@ foreach a ( $argv )
   else
     if ( "$a" != "-d" ) then
       set arglist = ( $arglist $a )
-    endif
-    if ( "$a" == "all_wrfvar" ) then
-      grep "DA_CORE=1" configure.wrf > /dev/null
-      if ( ! $status ) then 
-         # If configuration file has DA_CORE=1 hardwired, ok to set WRF_DA_CORE to 1
-         setenv WRF_DA_CORE 1
-      endif
-    endif
-    if ( "$a" == "nmm_real" ) then
-      grep "NMM_CORE=1" configure.wrf > /dev/null
-      if ( ! $status ) then 
-         # If configuration file has NMM_CORE=1 hardwired, ok to set WRF_NMM_CORE to 1
-         if ( ! $?WRF_NMM_CORE ) setenv WRF_NMM_CORE 1
-      endif
     endif
     if ( "$a" == "-j" ) then
       shift argv
@@ -70,41 +34,10 @@ else
 
 # these settings get passed down through the environment in the
 # calls to Make
-  if ( ! $?WRF_DA_CORE )     setenv WRF_DA_CORE 0
-  if ( ! $?WRF_EM_CORE )     setenv WRF_EM_CORE 0
-  if ( ! $?WRF_NMM_CORE )    setenv WRF_NMM_CORE 0
-  if ( ! $?WRF_COAMPS_CORE ) setenv WRF_COAMPS_CORE 0
-  if ( ! $?WRF_EXP_CORE )    setenv WRF_EXP_CORE 0
-  if ( ! $?WRF_CONVERT ) then
-     if ( "$arglist" == "convert_em" ) then
-       setenv WRF_CONVERT 1
-       setenv WRF_EM_CORE 0
-     else
-       setenv WRF_CONVERT 0
-     endif
-  endif
-
-  if ( ! $?DA_ARCHFLAGS )     setenv DA_ARCHFLAGS ""
-
-  if ( ( $WRF_DA_CORE == 1 )  && ( ! -d var ) ) then
-    echo "  "
-    echo "You need to download and untar the Var code, or"
-    echo "unset the WRF_DA_CORE env variable."
-    echo "  "
-    exit
-  endif
 
   set overwrite=0
 
-  echo " "
-  echo -n "Compiling: "
-  if ( $WRF_DA_CORE ) echo -n "WRF_DA_CORE "
-  if ( $WRF_EM_CORE ) echo -n "WRF_EM_CORE "
-  if ( $WRF_NMM_CORE ) echo -n "WRF_NMM_CORE "
-  if ( $WRF_COAMPS_CORE ) echo -n "WRF_COAMPS_CORE "
-  if ( $WRF_EXP_CORE ) echo -n "WRF_EXP_CORE "
-  echo "."
-  echo " "
+  echo -n "Compiling GEN_BE "
 
   if ( ! $?GEN_BE_SRC_ROOT_DIR ) setenv GEN_BE_SRC_ROOT_DIR `pwd`
 
