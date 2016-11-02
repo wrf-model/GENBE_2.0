@@ -36,7 +36,7 @@ endif
 set arglist=""
 foreach a ( $argv )
   if ( "$a" == "-h" ) then
-    goto hlp
+    goto help
   else
     if ( "$a" != "-d" ) then
       set arglist = ( $arglist $a )
@@ -63,7 +63,7 @@ foreach a ( $argv )
 end
 
 if ( "$arglist" == "" ) then
-  goto hlp
+  goto help
 else
   unsetenv A2DCASE
   setenv A2DCASE `echo $arglist | grep 2d`
@@ -150,18 +150,12 @@ endif
 
 exit 0
 
-hlp:
+help:
 
 echo ' '
 echo 'Usage:'
 echo ' '
 echo '   compile [-d] [-j n] gen_be   compile gen_be in src dir '
-echo ' '
-foreach d ( `/bin/ls test` )
-  if ( "$d" != "CVS" ) then
-    echo "      compile $d"
-  endif
-end
 echo ' '
 echo '  compile -d                 compile without optimization and with debugging'
 echo '  compile -j n               parallel make using n tasks if supported (default 2)'

@@ -1,0 +1,4 @@
+# This gitignore file is to avoid tracking .f90 files and other files #
+# created at compile time which might be specific to this directory   #
+#######################################################################
+*.f90
