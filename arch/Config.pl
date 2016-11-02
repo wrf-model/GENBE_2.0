@@ -20,12 +20,6 @@ $sw_rwordsize="\$\(NATIVE_RWORDSIZE\)";
 $WRFCHEM = 0 ;
 $sw_os = "ARCH" ;           # ARCH will match any
 $sw_mach = "ARCH" ;         # ARCH will match any
-$sw_wrf_core = "" ;
-$sw_da_core = "-DDA_CORE=\$\(WRF_DA_CORE\)" ;
-$sw_nmm_core = "-DNMM_CORE=\$\(WRF_NMM_CORE\)" ;
-$sw_em_core = "-DEM_CORE=\$\(WRF_EM_CORE\)" ;
-$sw_exp_core = "-DEXP_CORE=\$\(WRF_EXP_CORE\)" ;
-$sw_coamps_core = "-DCOAMPS_CORE=\$\(WRF_COAMPS_CORE\)" ;
 $sw_dmparallel = "" ;
 $sw_ompparallel = "" ;
 $sw_stubmpi = "" ;
@@ -77,50 +71,6 @@ while ( substr( $ARGV[0], 0, 1 ) eq "-" )
 # multiple options separated by spaces are passed in from sh script
 # separated by ! instead. Replace with spaces here.
     $sw_ldflags =~ s/!/ /g ;
-  }
-  if ( substr( $ARGV[0], 1, 9 ) eq "wrf_core=" )
-  {
-    $sw_wrf_core = substr( $ARGV[0], 10 ) ;
-    if ( index ( $sw_wrf_core , "EM_CORE" ) > -1 ) 
-    {
-      $sw_em_core = "-DEM_CORE=1" ;
-      $sw_da_core = "-DDA_CORE=0" ;
-      $sw_nmm_core = "-DNMM_CORE=0" ;
-      $sw_exp_core = "-DEXP_CORE=0" ;
-      $sw_coamps_core = "-DCOAMPS_CORE=0" ;
-    }
-    if ( index ( $sw_wrf_core , "DA_CORE" ) > -1 ) 
-    {
-      $sw_em_core = "-DEM_CORE=1" ;
-      $sw_da_core = "-DDA_CORE=1" ;
-      $sw_nmm_core = "-DNMM_CORE=0" ;
-      $sw_exp_core = "-DEXP_CORE=0" ;
-      $sw_coamps_core = "-DCOAMPS_CORE=0" ;
-    }
-    if ( index ( $sw_wrf_core , "NMM_CORE" ) > -1 ) 
-    {
-      $sw_em_core = "-DEM_CORE=0" ;
-      $sw_da_core = "-DDA_CORE=0" ;
-      $sw_nmm_core = "-DNMM_CORE=1" ;
-      $sw_exp_core = "-DEXP_CORE=0" ;
-      $sw_coamps_core = "-DCOAMPS_CORE=0" ;
-    }
-    if ( index ( $sw_wrf_core , "EXP_CORE" ) > -1 ) 
-    {
-      $sw_em_core = "-DEM_CORE=0" ;
-      $sw_da_core = "-DDA_CORE=0" ;
-      $sw_nmm_core = "-DNMM_CORE=0" ;
-      $sw_exp_core = "-DEXP_CORE=1" ;
-      $sw_coamps_core = "-DCOAMPS_CORE=0" ;
-    }
-    if ( index ( $sw_wrf_core , "COAMPS_CORE" ) > -1 ) 
-    {
-      $sw_em_core = "-DEM_CORE=0" ;
-      $sw_da_core = "-DDA_CORE=0" ;
-      $sw_nmm_core = "-DNMM_CORE=0" ;
-      $sw_exp_core = "-DEXP_CORE=0" ;
-      $sw_coamps_core = "-DCOAMPS_CORE=1" ;
-    }
   }
   if ( substr( $ARGV[0], 1, 13 ) eq "compileflags=" )
   {
@@ -528,11 +478,6 @@ while ( <ARCH_PREAMBLE> )
     $_ =~ s:ESMFIODEFS::g ;
     $_ =~ s:ESMFTARGET:esmf_time:g ;
     }
-  $_ =~ s:CONFIGURE_EM_CORE:$sw_em_core:g ;
-  $_ =~ s:CONFIGURE_DA_CORE:$sw_da_core:g ;
-  $_ =~ s:CONFIGURE_NMM_CORE:$sw_nmm_core:g ;
-  $_ =~ s:CONFIGURE_COAMPS_CORE:$sw_coamps_core:g ;
-  $_ =~ s:CONFIGURE_EXP_CORE:$sw_exp_core:g ;
 
   @preamble = ( @preamble, $_ ) ;
   }

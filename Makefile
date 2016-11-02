@@ -1,4 +1,4 @@
-#	Top level Makefile for wrf system
+#	Top level Makefile for GEN_BE system
 
 LN      =       ln -s
 MAKE    =       make -i -r
