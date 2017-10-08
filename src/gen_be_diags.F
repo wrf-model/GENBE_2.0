@@ -41,7 +41,7 @@ program gen_be_diags
    end type eigen_pointer
 
    type state_eigen_type
-   type (eigen_pointer), dimension(:), pointer :: num 
+      type (eigen_pointer), dimension(:), pointer :: num 
       integer :: nvar
    end type state_eigen_type
    type (state_eigen_type), pointer :: eigen_state
@@ -283,9 +283,10 @@ program gen_be_diags
    !------------------------------------------------------------------
    ! netcdf format
    call io_output_matrix_var(regcoeff,output_obj)
-   ! binary format wrfda
 
-   call da_readwrite_be_stage2_binary(ounit, regcoeff, bins, mesh)
+   ! binary format wrfda
+   call da_readwrite_be_stage2_binary(ounit, regcoeff, bins, mesh) ! from io_output_application.f90
+
    ! write variance
    call filter_state_min(variance, Dim3, bins%num_bins2d)
    !call filter_state(variance, limit_inf)
@@ -309,7 +310,7 @@ program gen_be_diags
          call io_output_eigen_var(eigen_state%num(vv)%eigen, output_obj)
          ! binary format
          if ( vardim_list(vv) == 3 ) then
-            call da_readwrite_be_stage3(ounit, Dim3, cv_listu(vv))
+            call da_readwrite_be_stage3(ounit, Dim3, cv_listu(vv)) ! from da_gen_be.f90
          else
             if (uh_method /= 'power') then ! ps_u ? GD
                call da_readwrite_be_stage3(ounit,  1, cv_listu(vv))
@@ -345,7 +346,7 @@ program gen_be_diags
          if (.not.file_here) then
             filename_list(vv) = trim(cv_listu(vv))//'/sl_print.b001.'//trim(cv_listu(vv)) 
          end if
-         ! binary format read write
+         ! binary format read write ! from io_output_application.f90
          if ( vardim_list(vv) == 3 ) then
             allocate(lenscale1d(1:Dim3))
             write(*,*)'n_smth_sl  ',n_smth_sl

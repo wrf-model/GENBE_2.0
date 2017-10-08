@@ -81,6 +81,17 @@ pwd
          echo "Submitting job for variable $VARIABLE and vertical index $VINDEX on $MACHINE"
 cat > gen_be_stage4_regional.csh << EOF
 #!/bin/csh
+#
+### LSF batch script to run an MPI application
+#
+##BSUB -P P64000510             # project code
+##BSUB -W 6:00       # wall-clock time (hrs:mins)
+###BSUB -n 1          # number of tasks in job
+###BSUB -R "span[ptile=16]"    # run 16 MPI tasks per node
+###BSUB -J ${TMP_DIR1}           # job name
+###BSUB -o ${TMP_DIR1}.out    # output file name in which %J is replaced by the job ID
+###BSUB -e ${TMP_DIR1}.err    # error file name in which %J is replaced by the job ID
+###BSUB -q caldera              # queue
 cd $TMP_DIR1
 ./gen_be_stage4.exe
 EOF
@@ -88,8 +99,8 @@ chmod 755 gen_be_stage4_regional.csh
 
 #qsub -l nodes=1:ppn=4,walltime=$WALLTIME -N stage4 -j oe -o ${logfile}  ./gen_be_stage4_regional.csh > gen_be_stage4_regional_${VARIABLE}_${VINDEX}.out 2>&1 &
 #  (rsh -n $MACHINE "cd $TMP_DIR1; ./gen_be_stage4_regional.exe > gen_be_stage4_regional_${VARIABLE}_${VINDEX}.out 2>&1") &
-
- ./gen_be_stage4_regional.csh ##  > gen_be_stage4_regional_${VARIABLE}_${VINDEX}.out 2>&1 
+./gen_be_stage4_regional.csh > stage4_regional_${VARIABLE}_${VINDEX}.out 2>&1
+#bsub < ./gen_be_stage4_regional.csh ##  > gen_be_stage4_regional_${VARIABLE}_${VINDEX}.out 2>&1 
 
       sleep 2 # Create small gap between submissions to avoid overwriting output.
       fi

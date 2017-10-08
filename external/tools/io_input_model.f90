@@ -285,7 +285,7 @@ module io_input_model
 !! read field, convert to state vector 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine convert_uv2state(domain, input_file, fft_method)
+  subroutine convert_uvw2state(domain, input_file, fft_method)
 
      use da_change_wind_variables
      use da_fft_initialize
@@ -297,7 +297,7 @@ module io_input_model
      character (len=1024), intent(in) :: input_file
      integer, intent(in) ::  fft_method
      character (len=12)    :: var
-     real, allocatable     :: u(:,:), v(:,:)
+     real, allocatable     :: u(:,:), v(:,:), w(:,:), w1(:,:), w2(:,:)
      real, allocatable     :: vor2d(:,:),div2d (:,:)
      real, allocatable     :: psi2d(:,:),chi2d (:,:)
      integer :: kk, ii, jj, iVar3d
@@ -318,7 +318,8 @@ module io_input_model
      integer               :: ifax1s(1:num_fft_factors) ! FFT factors.
      integer               :: ifax2s(1:num_fft_factors) ! FFT factors.
 
-     integer :: indice_psi, indice_chi, indice_vor, indice_div, indice_u, indice_v
+     integer :: indice_psi, indice_chi, indice_vor, indice_div, &
+                indice_u, indice_v, indice_w
 
      indice_psi =  get_state_indice(domain%state,"psi")
      indice_chi =  get_state_indice(domain%state,"chi")
@@ -326,6 +327,7 @@ module io_input_model
      indice_div =  get_state_indice(domain%state,"div")
      indice_u   =  get_state_indice(domain%state,"u")
      indice_v   =  get_state_indice(domain%state,"v")
+     indice_w   =  get_state_indice(domain%state,"w")
 
      poisson_method = 1
      test_inverse = .false.
@@ -334,11 +336,13 @@ module io_input_model
      ds = domain%mesh%ds%scalar
      write(*,*)'ds = ',ds
 
-     if ( (indice_psi/=0).or.(indice_chi/=0).or.(indice_vor/=0).or.(indice_div/=0).or.(indice_u/=0).or.(indice_v/=0) ) then
+     if ( (indice_psi/=0).or.(indice_chi/=0).or.(indice_vor/=0).or.(indice_div/=0).or. &
+          (indice_u/=0).or.(indice_v/=0).or.(indice_w/=0) ) then
 
      if (trim(domain%model)=='WRF') then
 
         !  Initialize FFT coefficients:
+       !if ( (indice_psi/=0).or.(indice_chi/=0) ) then
         if ( poisson_method == 1 ) then
            call da_fft_initialize1( domain%mesh%Dim1, domain%mesh%Dim2, n1, n2, ifax1, ifax2 )
            call da_fft_initialize1( domain%mesh%Dim1+1, domain%mesh%Dim2+1, n1s, n2s, ifax1s, ifax2s )
@@ -358,10 +362,14 @@ module io_input_model
         write(*,*)'trigs1 trigs1s',trigs1(10), trigs1s(10)
         write(*,*)'fft_coeffs fft_coeffss ',fft_coeffs(1,10), fft_coeffss(10,10)
         write(*,*)'ifax1, ifax2 ifax1s, ifax2s ',ifax1(10), ifax2(10), ifax1s(10), ifax2s(10)
+       !end if
 
         ! allocate temporary arrays, dimensions can depend of the grid model
         allocate( u(domain%mesh%Dim1+1,domain%mesh%Dim2) )
         allocate( v(domain%mesh%Dim1,domain%mesh%Dim2+1) )
+        allocate( w(domain%mesh%Dim1,domain%mesh%Dim2) )
+        allocate( w1(domain%mesh%Dim1,domain%mesh%Dim2) )
+        allocate( w2(domain%mesh%Dim1,domain%mesh%Dim2) )
         allocate( vor2d(domain%mesh%Dim1+1,domain%mesh%Dim2+1) )
         allocate( div2d(domain%mesh%Dim1,domain%mesh%Dim2) )
         allocate( psi2d(domain%mesh%Dim1+1,domain%mesh%Dim2+1) )
@@ -373,6 +381,12 @@ module io_input_model
         mapfac_u(:,:) = domain%mesh%mapfac_u%array(:,:)
         mapfac_v(:,:) = domain%mesh%mapfac_v%array(:,:)
 
+        if ( indice_w /= 0 ) then
+           ! load W component
+           var = "W"
+           call da_get_field( input_file, var, 3, domain%mesh%Dim1,domain%mesh%Dim2, domain%mesh%Dim3+1, 1, w1 )
+        end if
+
         do kk = 1, domain%mesh%Dim3
     
            ! load U, V component
@@ -380,6 +394,15 @@ module io_input_model
            call da_get_field( input_file, var, 3, domain%mesh%Dim1+1, domain%mesh%Dim2, domain%mesh%Dim3, kk, u )
            var = "V"
            call da_get_field( input_file, var, 3, domain%mesh%Dim1, domain%mesh%Dim2+1, domain%mesh%Dim3, kk, v )
+
+          if ( indice_w /= 0 ) then
+           ! load W component
+           var = "W"
+           call da_get_field( input_file, var, 3,domain%mesh%Dim1,domain%mesh%Dim2, domain%mesh%Dim3+1, kk+1, w2 )
+           w(:,:)  = 0.5*( w1(:,:) + w2(:,:) )
+           w1(:,:) = w2(:,:)
+           domain%state%num(indice_w)%field%field3d%array(:,:,kk) = w(:,:)
+          end if
 
            ! Calculate vor2dticity (in center of mass grid on WRF's Arakawa C-grid):
            if ((indice_psi/=0).or.(indice_chi/=0).or.(indice_vor/=0).or.(indice_div/=0) ) then 
@@ -473,6 +496,9 @@ module io_input_model
     
        deallocate( u )
        deallocate( v )
+       deallocate( w )
+       deallocate( w1 )
+       deallocate( w2 )
        deallocate( vor2d )
        deallocate( div2d )
        deallocate( psi2d )
@@ -497,7 +523,7 @@ module io_input_model
        write(*,*)'No variable of control psi or chi or vor or div has been selected'
     end if
 
-  end subroutine convert_uv2state
+  end subroutine convert_uvw2state
 
 
   subroutine convert_qcond2state(domain, input_file, rsmall)
@@ -513,14 +539,15 @@ module io_input_model
      real(kind=8), allocatable    :: qcond(:,:)
      !real, allocatable     :: tmp(:,:)
      integer :: kk
-     integer :: indice_qcloud, indice_qrain, indice_qice, indice_qsnow
+     integer :: indice_qcloud, indice_qrain, indice_qice, indice_qsnow, indice_qgraup
 
      indice_qcloud = get_state_indice(domain%state,"qcloud")
      indice_qrain = get_state_indice(domain%state,"qrain")
      indice_qice = get_state_indice(domain%state,"qice")
      indice_qsnow = get_state_indice(domain%state,"qsnow")
+     indice_qgraup = get_state_indice(domain%state,"qgraup")
 
-     if ( (indice_qcloud/=0).or.(indice_qrain/=0).or.(indice_qice/=0).or.(indice_qsnow/=0) ) then
+     if ( (indice_qcloud/=0).or.(indice_qrain/=0).or.(indice_qice/=0).or.(indice_qsnow/=0).or.(indice_qgraup/=0) ) then
      
      if (trim(domain%model)=='WRF') then
 
@@ -564,6 +591,16 @@ module io_input_model
               end where
               domain % state % num(indice_qsnow) % field % field3d % array(:,:,kk) = qcond
            end if
+
+           if ( indice_qgraup /= 0 ) then
+              var = "QGRAUP"
+              call da_get_field8( input_file, var, 3, domain%mesh%Dim1, domain%mesh%Dim2, domain%mesh%Dim3, kk, qcond )
+              where(qcond(:,:).lt.0.0)
+                  qcond(:,:)=rsmall
+              end where
+              domain % state % num(indice_qgraup) % field % field3d % array(:,:,kk) = qcond
+           end if
+
 
         end do       
 
@@ -934,7 +971,8 @@ module io_input_model
       pass_filter = .true.
 
       if ((trim(varname)=='qcloud_u').or.(trim(varname)=='qrain_u').or.(trim(varname)=='qice_u').or.(trim(varname)=='qsnow_u') .or. &
-         (trim(varname)=='qcloud').or.(trim(varname)=='qrain').or.(trim(varname)=='qice').or.(trim(varname)=='qsnow') ) then
+         (trim(varname)=='qcloud').or.(trim(varname)=='qrain').or.(trim(varname)=='qice').or.(trim(varname)=='qsnow') .or. &
+         (trim(varname)=='qgraup').or.(trim(varname)=='qgraup_u') ) then
          limit0 = 1e-6 
          if ( field_val < limit0 ) then
             pass_filter = .false.
