@@ -135,10 +135,11 @@ for VARIABLE in $CONTROL_VARIABLES; do
    fi
 
    if [[ $SL_METHOD -le 1 ]] ; then
+    vidlab=`printf "%03d" ${MAX_VINDEX}`
     if [[ $VARIABLE == "ps" || $VARIABLE == "ps_u" ]]; then
-    SL_FILE=${TMP_DIR}/dir.${VARIABLE}${MAX_VINDEX}/sl_print.${VARIABLE}.0${MAX_VINDEX}
+    SL_FILE=${TMP_DIR}/dir.${VARIABLE}${MAX_VINDEX}/sl_print.b001.l${vidlab}.${VARIABLE}
     else
-    SL_FILE=${TMP_DIR}/dir.${VARIABLE}${MAX_VINDEX}/sl_print.${VARIABLE}.${MAX_VINDEX}
+    SL_FILE=${TMP_DIR}/dir.${VARIABLE}${MAX_VINDEX}/sl_print.b001.l${vidlab}.${VARIABLE}
     fi  
    else
    SL_FILE=${TMP_DIR}/dir.${VARIABLE}1/sl_print.b001.${VARIABLE}
@@ -149,10 +150,11 @@ for VARIABLE in $CONTROL_VARIABLES; do
    sleep 60
 
    done  # End loop over Waiting for lat sl
-   
+   echo "${SL_FILE} is created"
+   cat ${SL_FILE}   
    let VINDEX=1
    if [[ $SL_METHOD -le 1 ]] ; then
-      cp ${TMP_DIR}/dir.${VARIABLE}${VINDEX}/sl_* ${WORK_DIR}/${VARIABLE}/sl_print.${VARIABLE}
+      cp ${TMP_DIR}/dir.${VARIABLE}${VINDEX}/sl_* ${WORK_DIR}/${VARIABLE}/sl_print.b001.${VARIABLE}
    else
       cp ${TMP_DIR}/dir.${VARIABLE}${VINDEX}/sl_print.b*${VARIABLE} ${WORK_DIR}/${VARIABLE}
    fi
@@ -162,7 +164,7 @@ for VARIABLE in $CONTROL_VARIABLES; do
    if [[ $MAX_VINDEX -gt 1 ]]; then
       let VINDEX=2
       while [[ $VINDEX -le $MAX_VINDEX ]]; do
-         cat ${TMP_DIR}/dir.${VARIABLE}${VINDEX}/sl_* >> ${WORK_DIR}/${VARIABLE}/sl_print.${VARIABLE}
+         cat ${TMP_DIR}/dir.${VARIABLE}${VINDEX}/sl_* >> ${WORK_DIR}/${VARIABLE}/sl_print.b001.${VARIABLE}
          let VINDEX=$VINDEX+1
       done
    fi

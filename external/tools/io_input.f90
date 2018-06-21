@@ -178,7 +178,7 @@ module io_input
       nferr = nf_inq_varid(input_obj%rd_ncid, 'Times', input_obj % rdVarIDchar)
 
       call io_input_state(input_obj, state)
-      call io_input_field_time(input_obj, state % date)
+      !call io_input_field_time(input_obj, state % date)
       call io_input_finalize(input_obj)
 
    end subroutine read_input_state

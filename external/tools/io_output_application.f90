@@ -267,7 +267,7 @@ module io_output_application
       character(len=1024)      :: filename                      ! Input filename.
       real, parameter          :: spike_tolerance = 1.5      ! Threshold for detecting spikes in data. 
       character*10             :: cvar                       ! Dummy variable name.
-      character*2              :: ck                         ! Loop index -> character.
+      character*3              :: ck                         ! Loop index -> character.
       integer                  :: k                          ! Loop counter.
       integer                  :: kdum                       ! Dummy vertical index.
       integer                  :: max_wavenumber             ! Smallest scale required (ni/2 - 1).
