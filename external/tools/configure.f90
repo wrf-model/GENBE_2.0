@@ -75,9 +75,9 @@ real              :: spike_tolerance = 1.5
 
 !!!!!
 integer :: io_status
-integer, parameter :: nMaxvar = 10
+integer, parameter :: nMaxvar = 11
 integer, dimension(nMaxvar) :: covar1, covar2, covar3, covar4, covar5 
-integer, dimension(nMaxvar) :: covar6, covar7, covar8, covar9, covar10 
+integer, dimension(nMaxvar) :: covar6, covar7, covar8, covar9, covar10, covar11
 integer, dimension(nMaxvar) :: ncovar, nvarce1d, ncovar_row 
 integer, dimension(nMaxvar,nMaxvar) :: covar_ID, covar_ID2 
 character (len=32), dimension(nMaxvar) :: cv_list, cv_listu, tmp_list,  tmp_list2 
@@ -118,6 +118,7 @@ namelist /gen_be_info/ model, &
                    covar8, &
                    covar9, &
                    covar10, &
+                   covar11, &
                    use_chol_reg
       namelist /gen_be_bin/ bin_type, &
                    lat_min, &
@@ -146,7 +147,7 @@ contains
 
       character (len=*), intent(in) :: varname
       integer, intent(inout) :: vardim_list0
-      integer, parameter :: NVARMAX = 41
+      integer, parameter :: NVARMAX = 42
       character (len=10), dimension(1:NVARMAX) :: varname_all
       integer, dimension(1:NVARMAX) :: vardim_all
       character (len=10) :: varname_u
@@ -191,11 +192,12 @@ contains
       varname_all(37) = 'ho'
       varname_all(38) = 'no'
       varname_all(39) = 'ch4'
-      vardim_all(1:39) = 3
+      varname_all(40) = 'w'
+      vardim_all(1:40) = 3
 
-      varname_all(40) = 'ps'
-      varname_all(41) = 'vis'
-      vardim_all(40:41) = 2 
+      varname_all(41) = 'ps'
+      varname_all(42) = 'vis'
+      vardim_all(41:42) = 2 
 
       jj = 0
       !! need to be read in the external ascii file, next dev GD !!
@@ -317,7 +319,7 @@ contains
           application='GSI'
        else if(  trim(application(1:5)) == "WRFDA" .or. trim(application(1:5)) == "wrfda") then
           !data_on_levels = .false.
-          write(*,*)'Enforce data_on_levels false for GSI Applications'
+          write(*,*)'Enforce data_on_levels false for WRFDA Applications'
           application='WRFDA'
        else
           write(*,*)'this application is unknown'
@@ -347,6 +349,7 @@ contains
        covar_ID(8,:) = covar8(:)
        covar_ID(9,:) = covar9(:)
        covar_ID(10,:)= covar10(:)
+       covar_ID(11,:)= covar11(:)
 
        covar_ID2 = covar_ID
 

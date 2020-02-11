@@ -81,6 +81,17 @@ pwd
          echo "Submitting job for variable $VARIABLE and vertical index $VINDEX on $MACHINE"
 cat > gen_be_stage4_regional.csh << EOF
 #!/bin/csh
+#
+### LSF batch script to run an MPI application
+#
+##BSUB -P P64000510             # project code
+##BSUB -W 6:00       # wall-clock time (hrs:mins)
+###BSUB -n 1          # number of tasks in job
+###BSUB -R "span[ptile=16]"    # run 16 MPI tasks per node
+###BSUB -J ${TMP_DIR1}           # job name
+###BSUB -o ${TMP_DIR1}.out    # output file name in which %J is replaced by the job ID
+###BSUB -e ${TMP_DIR1}.err    # error file name in which %J is replaced by the job ID
+###BSUB -q caldera              # queue
 cd $TMP_DIR1
 ./gen_be_stage4.exe
 EOF
@@ -88,8 +99,8 @@ chmod 755 gen_be_stage4_regional.csh
 
 #qsub -l nodes=1:ppn=4,walltime=$WALLTIME -N stage4 -j oe -o ${logfile}  ./gen_be_stage4_regional.csh > gen_be_stage4_regional_${VARIABLE}_${VINDEX}.out 2>&1 &
 #  (rsh -n $MACHINE "cd $TMP_DIR1; ./gen_be_stage4_regional.exe > gen_be_stage4_regional_${VARIABLE}_${VINDEX}.out 2>&1") &
-
- ./gen_be_stage4_regional.csh ##  > gen_be_stage4_regional_${VARIABLE}_${VINDEX}.out 2>&1 
+./gen_be_stage4_regional.csh > stage4_regional_${VARIABLE}_${VINDEX}.out 2>&1
+#bsub < ./gen_be_stage4_regional.csh ##  > gen_be_stage4_regional_${VARIABLE}_${VINDEX}.out 2>&1 
 
       sleep 2 # Create small gap between submissions to avoid overwriting output.
       fi
@@ -124,10 +135,11 @@ for VARIABLE in $CONTROL_VARIABLES; do
    fi
 
    if [[ $SL_METHOD -le 1 ]] ; then
+    vidlab=`printf "%03d" ${MAX_VINDEX}`
     if [[ $VARIABLE == "ps" || $VARIABLE == "ps_u" ]]; then
-    SL_FILE=${TMP_DIR}/dir.${VARIABLE}${MAX_VINDEX}/sl_print.${VARIABLE}.0${MAX_VINDEX}
+    SL_FILE=${TMP_DIR}/dir.${VARIABLE}${MAX_VINDEX}/sl_print.b001.l${vidlab}.${VARIABLE}
     else
-    SL_FILE=${TMP_DIR}/dir.${VARIABLE}${MAX_VINDEX}/sl_print.${VARIABLE}.${MAX_VINDEX}
+    SL_FILE=${TMP_DIR}/dir.${VARIABLE}${MAX_VINDEX}/sl_print.b001.l${vidlab}.${VARIABLE}
     fi  
    else
    SL_FILE=${TMP_DIR}/dir.${VARIABLE}1/sl_print.b001.${VARIABLE}
@@ -138,10 +150,11 @@ for VARIABLE in $CONTROL_VARIABLES; do
    sleep 60
 
    done  # End loop over Waiting for lat sl
-   
+   echo "${SL_FILE} is created"
+   cat ${SL_FILE}   
    let VINDEX=1
    if [[ $SL_METHOD -le 1 ]] ; then
-      cp ${TMP_DIR}/dir.${VARIABLE}${VINDEX}/sl_* ${WORK_DIR}/${VARIABLE}/sl_print.${VARIABLE}
+      cp ${TMP_DIR}/dir.${VARIABLE}${VINDEX}/sl_* ${WORK_DIR}/${VARIABLE}/sl_print.b001.${VARIABLE}
    else
       cp ${TMP_DIR}/dir.${VARIABLE}${VINDEX}/sl_print.b*${VARIABLE} ${WORK_DIR}/${VARIABLE}
    fi
@@ -151,7 +164,7 @@ for VARIABLE in $CONTROL_VARIABLES; do
    if [[ $MAX_VINDEX -gt 1 ]]; then
       let VINDEX=2
       while [[ $VINDEX -le $MAX_VINDEX ]]; do
-         cat ${TMP_DIR}/dir.${VARIABLE}${VINDEX}/sl_* >> ${WORK_DIR}/${VARIABLE}/sl_print.${VARIABLE}
+         cat ${TMP_DIR}/dir.${VARIABLE}${VINDEX}/sl_* >> ${WORK_DIR}/${VARIABLE}/sl_print.b001.${VARIABLE}
          let VINDEX=$VINDEX+1
       done
    fi

@@ -26,36 +26,6 @@ module io_output_application
       ! read/write regression coefficient binary format
       !---------------------------------------------------------------------------
 
-      subroutine write_matrix_state_binary(ounit, matrix, bins, mesh)
-
-         !use da_tools_serial, only : da_get_unit
-         
-         implicit none
-         type (state_matrix_type), intent(in) :: matrix
-         type (mesh_type), intent(in) :: mesh
-         type (bins_type), intent(in) :: bins
-         integer, intent(in) :: ounit
-         integer :: ii, jj
-       
-         write(*,*)'inside write_matrix_state_binary ounit ',ounit
- 
-         do jj = 1, matrix%nvar
-            do ii = 1, matrix%nvar
-               if ( matrix%num2d(ii,jj)%IDdim == 1 ) then
-                  write(*,*)matrix%num2d(ii,jj)%field%field1d%ioinfo%fieldName
-                  write(ounit) matrix%num2d(ii,jj)%field%field1d%array
-               else if ( matrix%num2d(ii,jj)%IDdim == 2 ) then
-                  write(*,*)matrix%num2d(ii,jj)%field%field2d%ioinfo%fieldName
-                  write(ounit) matrix%num2d(ii,jj)%field%field2d%array
-               else if ( matrix%num2d(ii,jj)%IDdim == 3 ) then
-                  write(*,*)matrix%num2d(ii,jj)%field%field3d%ioinfo%fieldName
-                  write(ounit) matrix%num2d(ii,jj)%field%field3d%array
-               end if 
-            end do
-         end do 
-
-      end subroutine write_matrix_state_binary
-
 
       subroutine write_stage2_dat(filename, matrix, bins, mesh)
 
@@ -102,6 +72,46 @@ module io_output_application
          end do
  
       end subroutine read_matrix_state_binary
+
+      subroutine write_matrix_state_binary(ounit, matrix, bins, mesh)
+
+         !use da_tools_serial, only : da_get_unit
+         
+         implicit none
+         type (state_matrix_type), intent(in) :: matrix
+         type (mesh_type), intent(in) :: mesh
+         type (bins_type), intent(in) :: bins
+         integer, intent(in) :: ounit
+         integer :: ii, jj
+       
+         write(*,*)'inside write_matrix_state_binary ounit ',ounit
+ 
+         do jj = 1, matrix%nvar
+            do ii = 1, matrix%nvar
+               if ( matrix%num2d(ii,jj)%IDdim == 1 ) then
+                  write(*,*)matrix%num2d(ii,jj)%field%field1d%ioinfo%fieldName
+                  write(ounit) matrix%num2d(ii,jj)%field%field1d%array
+               endif		        
+			end do
+         end do 
+         do jj = 1, matrix%nvar
+            do ii = 1, matrix%nvar		 
+               if ( matrix%num2d(ii,jj)%IDdim == 2 ) then
+                  write(*,*)matrix%num2d(ii,jj)%field%field2d%ioinfo%fieldName
+                  write(ounit) matrix%num2d(ii,jj)%field%field2d%array
+               endif 
+		    enddo
+         enddo	
+         do jj = 1, matrix%nvar
+            do ii = 1, matrix%nvar		 
+ 			  if ( matrix%num2d(ii,jj)%IDdim == 3 ) then
+                  write(*,*)matrix%num2d(ii,jj)%field%field3d%ioinfo%fieldName
+                  write(ounit) matrix%num2d(ii,jj)%field%field3d%array
+               end if 
+            end do
+         end do 
+
+      end subroutine write_matrix_state_binary
 
 
       subroutine read_stage2_dat(filename, matrix, bins, mesh)
@@ -267,7 +277,7 @@ module io_output_application
       character(len=1024)      :: filename                      ! Input filename.
       real, parameter          :: spike_tolerance = 1.5      ! Threshold for detecting spikes in data. 
       character*10             :: cvar                       ! Dummy variable name.
-      character*2              :: ck                         ! Loop index -> character.
+      character*3              :: ck                         ! Loop index -> character.
       integer                  :: k                          ! Loop counter.
       integer                  :: kdum                       ! Dummy vertical index.
       integer                  :: max_wavenumber             ! Smallest scale required (ni/2 - 1).

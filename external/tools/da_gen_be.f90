@@ -2469,7 +2469,7 @@ subroutine da_readwrite_be_stage4(outunit, nk, uh_method, n_smth_sl, variable)
 
    character(len=filename_len) :: filename                   ! Input filename.
    character*10             :: cvar                       ! Dummy variable name.
-   character*2              :: ck                         ! Loop index -> character.
+   character*3              :: ck                         ! Loop index -> character.
    integer                  :: k                          ! Loop counter.
    integer                  :: kdum                       ! Dummy vertical index.
    integer                  :: max_wavenumber             ! Smallest scale required (ni/2 - 1).
@@ -2487,8 +2487,8 @@ subroutine da_readwrite_be_stage4(outunit, nk, uh_method, n_smth_sl, variable)
 
    if (uh_method .eq. 'power') then
       do k = 1, nk
-         write(ck,'(i2)')k
-         if (k < 10) ck = '0'//ck(2:2)
+         write(ck,'(i3.3)')k
+         !if (k < 10) ck = '0'//ck(2:2)
 
          filename = trim(variable)//'/'//trim(variable)
          filename = trim(filename)//'.'//ck//'.spectrum'

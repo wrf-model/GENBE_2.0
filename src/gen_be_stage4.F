@@ -473,9 +473,9 @@ program gen_be_stage4_regional
            if ( use_global_bin ) len_bin_field(b,kk) = len_bin_field(1,kk)
            write(unit=6,fmt='(a,i4,3e15.5)') " Level ",kk,var_bin_field(b,kk), var_bin_lap_field(b,kk),len_bin_field(b,kk)/ds 
            if (len_bin_field(b,kk)==0) then
-              write(ounit,'(i2.2,2e20.5)') kk,-999.,len_bin_field(b,kk)/ds
+              write(ounit,'(i3.3,2e20.5)') kk,-999.,len_bin_field(b,kk)/ds
            else
-              write(ounit,'(i2.2,2e20.5)') kk,ds/len_bin_field(b,kk),len_bin_field(b,kk)/ds 
+              write(ounit,'(i3.3,2e20.5)') kk,ds/len_bin_field(b,kk),len_bin_field(b,kk)/ds 
            end if
 
         end do
@@ -483,7 +483,7 @@ program gen_be_stage4_regional
      end do
 
      
-  else
+    else
 
 
      ! Output local variances and lengthscales, laplacian 
@@ -552,8 +552,8 @@ program gen_be_stage4_regional
            end if
            
            write(6,*) kk, ll_tot, ni*nj, med_len_field(kk)
-           write(ounit,'(i2.2,2e20.5)') kk,med_len_field_tmp(kk),med_len_field(kk)/ds
-           write(6,'(i2.2,2e20.5)') kk,med_len_field_tmp(kk),med_len_field(kk)/ds
+           write(ounit,'(i3.3,2e20.5)') kk,med_len_field_tmp(kk),med_len_field(kk)/ds
+           write(6,'(i3.3,2e20.5)') kk,med_len_field_tmp(kk),med_len_field(kk)/ds
 
            if ((use_global_bin).and.(num_bins2d.gt.1)) then
               do ii=2, num_bins2d             
@@ -562,8 +562,8 @@ program gen_be_stage4_regional
                  action='write', access='sequential', status='replace')
                  write(6,fmt='(2a)') " [3.1] Write lengthscale into ",trim(filename)
                  write(6,*) kk, ll_tot, ni*nj, med_len_field(kk)
-                 write(ounit,'(i2.2,2e20.5)')kk,med_len_field_tmp(kk),med_len_field(kk)/ds
-                 write(6,'(i2.2,2e20.5)')kk,med_len_field_tmp(kk),med_len_field(kk)/ds
+                 write(ounit,'(i3.3,2e20.5)')kk,med_len_field_tmp(kk),med_len_field(kk)/ds
+                 write(6,'(i3.3,2e20.5)')kk,med_len_field_tmp(kk),med_len_field(kk)/ds
               end do
            end if
 

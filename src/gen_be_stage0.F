@@ -133,7 +133,7 @@ program gen_be_stage0
       counter = counter + 1
       write(*,*)'member : ',trim(input_file)
       
-      call convert_uv2state(domain,input_file,fft_method)
+      call convert_uvw2state(domain,input_file,fft_method)
       call convert_qcond2state(domain,input_file,rsmall)
       call convert_qt2state(domain,input_file)
       !call convert_chem2state(domain,input_file)
