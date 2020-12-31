@@ -136,7 +136,9 @@ program gen_be_stage0
       call convert_uvw2state(domain,input_file,fft_method)
       call convert_qcond2state(domain,input_file,rsmall)
       call convert_qt2state(domain,input_file)
-      !call convert_chem2state(domain,input_file)
+      if (aero_opt.ge.1) then
+        call convert_chem2state(domain,input_file)
+      end if
       call convert_psfc2state(domain,input_file)
 
       if ( holm_opt ) then

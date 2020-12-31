@@ -292,6 +292,7 @@ program gen_be_diags
    !call filter_state(variance, limit_inf)
    call io_output_state_var(variance, itime, output_obj)
 
+
    !-----------------------------------------------------------------
    ! write stage 3 / eigen vector - values / vert length scale
    !-----------------------------------------------------------------

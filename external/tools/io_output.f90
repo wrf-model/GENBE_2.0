@@ -43,7 +43,7 @@ module io_output
 
       integer :: wrVarIDvar0
       integer :: ivarnd
-      integer , dimension(100) :: wrVarIDvarnd
+      integer , dimension(400) :: wrVarIDvarnd
       integer :: wrVarIDate
 
       !! mesh parameter
@@ -72,7 +72,7 @@ module io_output
 
       !! covariance array (from namelist)
       integer :: wrVarIDcovar       
-      integer , dimension(100) :: wrVarIDnaml
+      integer , dimension(400) :: wrVarIDnaml
 
    end type io_output_object
 
@@ -301,6 +301,7 @@ module io_output
             if ( itime == 0 ) then
                nferr = nf_def_var(output_obj % wr_ncid, trim(state%num(vv)%field%field3d%ioinfo%fieldName), &
                                NF_DOUBLE, 3, dimlist, output_obj % wrVarIDvarnd(ivarnd) )
+
                call check_err(nferr,trim(state%num(vv)%field%field3d%ioinfo%fieldName))
             else 
                nferr = nf_def_var(output_obj % wr_ncid, trim(state%num(vv)%field%field3d%ioinfo%fieldName), &
@@ -1419,6 +1420,7 @@ subroutine compute_dynamic_mask(bins, mesh, state, state_mean, cem, date0)
          dimlist(1) = output_obj % wrDimIDlonu
          dimlist(2) = output_obj % wrDimIDlatu
          nferr = nf_def_var(output_obj % wr_ncid, mesh%mapfac_u%ioinfo%fieldName, NF_DOUBLE, 2, dimlist, output_obj % wrVarIDmapfu)
+
       end if
       ! define mapfac_v
       if (associated(mesh%mapfac_v)) then

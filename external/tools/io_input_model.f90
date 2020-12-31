@@ -682,9 +682,15 @@ module io_input_model
      character (len=1024),intent(in) :: input_file
      real(kind=8), allocatable    :: temp2d(:,:)
      character (len=12), allocatable   :: varname_wrf(:), varname_ind(:)
+     character (len=12) :: varname_out
      integer :: kk, ii, indice, nchem
 
-     nchem = 23 
+     if (aero_opt.eq.1) then             !!! aero cv for GOCART + gas cv !!!
+       nchem = 23
+     else if (aero_opt.eq.2) then        !!! aero cv for MOSAIC + gas cv !!! 
+       nchem = 36
+     end if 
+
      allocate(varname_wrf(1:nchem))
      allocate(varname_ind(1:nchem))
 
@@ -692,6 +698,9 @@ module io_input_model
      ! a subroutine that convert name_model to name of gen_be (indice of state)
      ! convert_varname_model2state(model,varname_model,varname_indice) 
      ! G. DESCOMBES
+
+     if (aero_opt.eq.1) then
+
      varname_wrf(1)  = "DUST_1"
      varname_wrf(2)  = "DUST_2"
      varname_wrf(3)  = "DUST_3"
@@ -740,8 +749,85 @@ module io_input_model
      varname_wrf(22) = "ho"
      varname_wrf(23) = "so2"
 
+     else if (aero_opt.eq.2) then 
+     varname_wrf(1)  = "bc_a01"
+     varname_wrf(2)  = "bc_a02"
+     varname_wrf(3)  = "bc_a03"
+     varname_wrf(4)  = "bc_a04"
+     varname_wrf(5)  = "oc_a01"
+     varname_wrf(6)  = "oc_a02"
+     varname_wrf(7)  = "oc_a03"
+     varname_wrf(8)  = "oc_a04"
+     varname_wrf(9)  = "so4_a01"
+     varname_wrf(10) = "so4_a02"
+     varname_wrf(11) = "so4_a03"
+     varname_wrf(12) = "so4_a04"
+     varname_wrf(13) = "no3_a01"
+     varname_wrf(14) = "no3_a02"
+     varname_wrf(15) = "no3_a03"
+     varname_wrf(16) = "no3_a04"
+     varname_wrf(17) = "nh4_a01"
+     varname_wrf(18) = "nh4_a02"
+     varname_wrf(19) = "nh4_a03"
+     varname_wrf(20) = "nh4_a04"
+     varname_wrf(21) = "cl_a01"
+     varname_wrf(22) = "cl_a02"
+     varname_wrf(23) = "cl_a03"
+     varname_wrf(24) = "cl_a04"
+     varname_wrf(25) = "na_a01"
+     varname_wrf(26) = "na_a02"
+     varname_wrf(27) = "na_a03"
+     varname_wrf(28) = "na_a04"
+     varname_wrf(29) = "oin_a01"
+     varname_wrf(30) = "oin_a02"
+     varname_wrf(31) = "oin_a03"
+     varname_wrf(32) = "oin_a04"
+     varname_wrf(33) = "so2"
+     varname_wrf(34) = "no2"
+     varname_wrf(35) = "o3"
+     varname_wrf(36) = "co"
+
+     varname_ind(1)  = "bc_1"
+     varname_ind(2)  = "bc_2"
+     varname_ind(3)  = "bc_3"
+     varname_ind(4)  = "bc_4"
+     varname_ind(5)  = "oc_1"
+     varname_ind(6)  = "oc_2"
+     varname_ind(7)  = "oc_3"
+     varname_ind(8)  = "oc_4"
+     varname_ind(9)  = "so4_1"
+     varname_ind(10) = "so4_2"
+     varname_ind(11) = "so4_3"
+     varname_ind(12) = "so4_4"
+     varname_ind(13) = "no3_1"
+     varname_ind(14) = "no3_2"
+     varname_ind(15) = "no3_3"
+     varname_ind(16) = "no3_4"
+     varname_ind(17) = "nh4_1"
+     varname_ind(18) = "nh4_2"
+     varname_ind(19) = "nh4_3"
+     varname_ind(20) = "nh4_4"
+     varname_ind(21) = "cl_1"
+     varname_ind(22) = "cl_2"
+     varname_ind(23) = "cl_3"
+     varname_ind(24) = "cl_4"
+     varname_ind(25) = "na_1"
+     varname_ind(26) = "na_2"
+     varname_ind(27) = "na_3"
+     varname_ind(28) = "na_4"
+     varname_ind(29) = "oin_1"
+     varname_ind(30) = "oin_2"
+     varname_ind(31) = "oin_3"
+     varname_ind(32) = "oin_4"
+     varname_ind(33) = "so2"
+     varname_ind(34) = "no2"
+     varname_ind(35) = "o3"
+     varname_ind(36) = "co"
+
+     end if
+
      do ii=1, nchem
- 
+
         indice = get_state_indice(domain%state,varname_ind(ii))
         write(*,*)'indice ',indice, trim(varname_ind(ii)), trim(varname_wrf(ii))
 

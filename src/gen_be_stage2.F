@@ -38,7 +38,7 @@ program gen_be_stage2
    character*10        :: variable                   ! Variable name
    character*3         :: ce2                        ! Variable name
    character(len=filename_len)        :: filename, varname, filename2                   ! Input filename.
-   character(len=filename_len), dimension(100) :: regcoeff_name   
+   character(len=filename_len), dimension(400) :: regcoeff_name   
 
    integer             :: ni, nj, nk, nkdum          ! Grid dimensions.
    integer             :: i, j, k, member, member2, k1, k2, k3, m, ll, i1 ,j1 ! Loop counters.
