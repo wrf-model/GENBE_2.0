@@ -13,27 +13,23 @@ testing_eofs = .true.
 /
 
 &Gen_be_cv
-nb_cv = 42,
-chem_opt = 2,
+nb_cv = 25, 
+chem_opt = 1, 
 cv_list = 'u','v','t','rh',
+          'dust_1','dust_2','dust_3','dust_4',
+          'seas_1','seas_2','seas_3','seas_4',
+          'oc1','oc2','bc1','bc2',
           'so2','no2','o3','co',
-          'bc_1','bc_2','bc_3','bc_4',
-          'oc_1','oc_2','oc_3','oc_4',
-          'so4_1','so4_2','so4_3','so4_4',
-          'no3_1','no3_2','no3_3','no3_4',
-          'nh4_1','nh4_2','nh4_3','nh4_4',
-          'cl_1','cl_2','cl_3','cl_4',
-          'na_1','na_2','na_3','na_4',
-          'oin_1','oin_2','oin_3','oin_4',
-          'w','ps', 
+          'sulf','p25','p10',
+          'w','ps',
 fft_method = 2,
 use_chol_reg = .false.
 /
 
 &gen_be_bin
 bin_type = 5,
-lat_min = 20.0,
-lat_max = 55.0,
+lat_min = 25.0,
+lat_max = 50.0,
 binwidth_lat = 5.0,
 hgt_min = 1000.0,
 hgt_max = 2000.0,

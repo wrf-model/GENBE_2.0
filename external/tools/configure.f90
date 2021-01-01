@@ -34,7 +34,7 @@ character (len=3)     :: ce                        ! Member index -> character.
 
 !gen_be_cv
 integer :: nb_cv
-integer :: aero_opt
+integer :: chem_opt
 integer :: fft_method
 character (len=32) :: masscv
 character (len=32) :: balpres
@@ -117,7 +117,7 @@ namelist /gen_be_info/ model, &
                    testing_eofs
 
        namelist /gen_be_cv/ nb_cv, &
-                   aero_opt, &
+                   chem_opt, &
                    cv_list, &
                    fft_method, &
                    covar1, &
@@ -209,9 +209,11 @@ contains
       integer :: ii, jj
       integer :: NVARMAX
 
-      if (aero_opt.eq.1) then                                                                                   
+      if (chem_opt.eq.0) then                                                                                   
+        NVARMAX = 19
+      else if (chem_opt.eq.1) then                                                                      
         NVARMAX = 42
-      else if (aero_opt.eq.2) then 
+      else if (chem_opt.eq.2) then 
         NVARMAX = 55
       end if
 
@@ -235,82 +237,87 @@ contains
       varname_all(14) = 'qsnow'
       varname_all(15) = 'qcwall'
       varname_all(16) = 'qgraup'
+      varname_all(17) = 'w'
+      vardim_all(1:17) = 3
 
-  if (aero_opt.eq.1) then
-      varname_all(17) = 'dust_1'
-      varname_all(18) = 'dust_2'
-      varname_all(19) = 'dust_3'
-      varname_all(20) = 'dust_4'
-      varname_all(21) = 'p25'
-      varname_all(22) = 'p10'
-      varname_all(23) = 'oc1'
-      varname_all(24) = 'oc2'
-      varname_all(25) = 'bc1'
-      varname_all(26) = 'bc2'
-      varname_all(27) = 'seas_1'
-      varname_all(28) = 'seas_2'
-      varname_all(29) = 'seas_3'
-      varname_all(30) = 'seas_4'
-      varname_all(31) = 'o3'
-      varname_all(32) = 'no2'
-      varname_all(33) = 'hno3'
-      varname_all(34) = 'so2'
-      varname_all(35) = 'co'
-      varname_all(36) = 'ch4'
-      varname_all(37) = 'ho'
-      varname_all(38) = 'no'
-      varname_all(39) = 'ch4'
-      varname_all(40) = 'w'
-      vardim_all(1:40) = 3
+  if (chem_opt.eq.0) then
+
+      varname_all(18) = 'ps'
+      varname_all(19) = 'vis'
+      vardim_all(18:19) = 2 
+
+  else if (chem_opt.eq.1) then
+      varname_all(18) = 'dust_1'
+      varname_all(19) = 'dust_2'
+      varname_all(20) = 'dust_3'
+      varname_all(21) = 'dust_4'
+      varname_all(22) = 'p25'
+      varname_all(23) = 'p10'
+      varname_all(24) = 'oc1'
+      varname_all(25) = 'oc2'
+      varname_all(26) = 'bc1'
+      varname_all(27) = 'bc2'
+      varname_all(28) = 'seas_1'
+      varname_all(29) = 'seas_2'
+      varname_all(30) = 'seas_3'
+      varname_all(31) = 'seas_4'
+      varname_all(32) = 'o3'
+      varname_all(33) = 'no2'
+      varname_all(34) = 'hno3'
+      varname_all(35) = 'so2'
+      varname_all(36) = 'co'
+      varname_all(37) = 'ch4'
+      varname_all(38) = 'ho'
+      varname_all(39) = 'no'
+      varname_all(40) = 'ch4'
+      vardim_all(18:40) = 3
 
       varname_all(41) = 'ps'
       varname_all(42) = 'vis'
       vardim_all(41:42) = 2 
-  else if (aero_opt.eq.2) then
+  else if (chem_opt.eq.2) then
 
-     varname_all(17)  = "bc_1"
-     varname_all(18)  = "bc_2"
-     varname_all(19)  = "bc_3"
-     varname_all(20)  = "bc_4"
-     varname_all(21)  = "oc_1"
-     varname_all(22)  = "oc_2"
-     varname_all(23)  = "oc_3"
-     varname_all(24)  = "oc_4"
-     varname_all(25)  = "so4_1"
-     varname_all(26) = "so4_2"
-     varname_all(27) = "so4_3"
-     varname_all(28) = "so4_4"
-     varname_all(29) = "no3_1"
-     varname_all(30) = "no3_2"
-     varname_all(31) = "no3_3"
-     varname_all(32) = "no3_4"
-     varname_all(33) = "nh4_1"
-     varname_all(34) = "nh4_2"
-     varname_all(35) = "nh4_3"
-     varname_all(36) = "nh4_4"
-     varname_all(37) = "cl_1"
-     varname_all(38) = "cl_2"
-     varname_all(39) = "cl_3"
-     varname_all(40) = "cl_4"
-     varname_all(41) = "na_1"
-     varname_all(42) = "na_2"
-     varname_all(43) = 'na_3'
-     varname_all(44) = "na_4"
-     varname_all(45) = "oin_1"
-     varname_all(46) = "oin_2"
-     varname_all(47) = "oin_3"
-     varname_all(48) = "oin_4"
-     varname_all(49) = "so2"
-     varname_all(50) = "no2"
-     varname_all(51) = "o3"
-     varname_all(52) = "co"
-     varname_all(53) = 'w'
+     varname_all(18)  = "bc_1"
+     varname_all(19)  = "bc_2"
+     varname_all(20)  = "bc_3"
+     varname_all(21)  = "bc_4"
+     varname_all(22)  = "oc_1"
+     varname_all(23)  = "oc_2"
+     varname_all(24)  = "oc_3"
+     varname_all(25)  = "oc_4"
+     varname_all(26)  = "so4_1"
+     varname_all(27) = "so4_2"
+     varname_all(28) = "so4_3"
+     varname_all(29) = "so4_4"
+     varname_all(30) = "no3_1"
+     varname_all(31) = "no3_2"
+     varname_all(32) = "no3_3"
+     varname_all(33) = "no3_4"
+     varname_all(34) = "nh4_1"
+     varname_all(35) = "nh4_2"
+     varname_all(36) = "nh4_3"
+     varname_all(37) = "nh4_4"
+     varname_all(38) = "cl_1"
+     varname_all(39) = "cl_2"
+     varname_all(40) = "cl_3"
+     varname_all(41) = "cl_4"
+     varname_all(42) = "na_1"
+     varname_all(43) = "na_2"
+     varname_all(44) = 'na_3'
+     varname_all(45) = "na_4"
+     varname_all(46) = "oin_1"
+     varname_all(47) = "oin_2"
+     varname_all(48) = "oin_3"
+     varname_all(49) = "oin_4"
+     varname_all(50) = "so2"
+     varname_all(51) = "no2"
+     varname_all(52) = "o3"
+     varname_all(53) = "co"
+     vardim_all(18:53) = 3
 
-      vardim_all(1:53) = 3
-
-      varname_all(54) = 'ps'
-      varname_all(55) = 'vis'
-      vardim_all(54:55) = 2 
+     varname_all(54) = 'ps'
+     varname_all(55) = 'vis'
+     vardim_all(54:55) = 2 
   end if
 
       jj = 0
@@ -398,6 +405,9 @@ contains
        holm_reference = 0
        cut = 0
 
+       chem_opt = 0
+       covar_ID = 0.0
+
        write(6,*) "reading namelist.input"
       
        open(funit,file='namelist.input',status='old',form='formatted',iostat = io_status)
@@ -463,12 +473,9 @@ contains
        covar_ID(8,:) = covar8(:)
        covar_ID(9,:) = covar9(:)
        covar_ID(10,:)= covar10(:)
-   if (aero_opt.eq.1) then
        covar_ID(11,:)= covar11(:)
 
-   else if (aero_opt.eq.2) then
-
-       covar_ID(11,:) = covar11(:)
+   if (chem_opt.ge.1) then
        covar_ID(12,:) = covar12(:)
        covar_ID(13,:) = covar13(:)
        covar_ID(14,:) = covar14(:)
@@ -477,7 +484,7 @@ contains
        covar_ID(17,:) = covar17(:)
        covar_ID(18,:) = covar18(:)
        covar_ID(19,:) = covar19(:)
-       covar_ID(20,:)= covar20(:)
+       covar_ID(20,:) = covar20(:)
 
        covar_ID(21,:) = covar21(:)
        covar_ID(22,:) = covar22(:)
@@ -488,7 +495,7 @@ contains
        covar_ID(27,:) = covar27(:)
        covar_ID(28,:) = covar28(:)  
        covar_ID(29,:) = covar29(:)
-       covar_ID(30,:)= covar30(:)
+       covar_ID(30,:) = covar30(:)
 
        covar_ID(31,:) = covar31(:)
        covar_ID(32,:) = covar32(:)
@@ -499,10 +506,13 @@ contains
        covar_ID(37,:) = covar37(:)
        covar_ID(38,:) = covar38(:)  
        covar_ID(39,:) = covar39(:)
-       covar_ID(40,:)= covar40(:)
+       covar_ID(40,:) = covar40(:)
 
        covar_ID(41,:) = covar41(:)
        covar_ID(42,:) = covar42(:)
+
+   else if (chem_opt.eq.2) then
+
        covar_ID(43,:) = covar43(:)
        covar_ID(44,:) = covar44(:)
        covar_ID(45,:) = covar45(:)

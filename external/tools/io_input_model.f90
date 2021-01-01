@@ -685,9 +685,9 @@ module io_input_model
      character (len=12) :: varname_out
      integer :: kk, ii, indice, nchem
 
-     if (aero_opt.eq.1) then             !!! aero cv for GOCART + gas cv !!!
+     if (chem_opt.eq.1) then             !!! aero cv for GOCART + gas cv !!!
        nchem = 23
-     else if (aero_opt.eq.2) then        !!! aero cv for MOSAIC + gas cv !!! 
+     else if (chem_opt.eq.2) then        !!! aero cv for MOSAIC + gas cv !!! 
        nchem = 36
      end if 
 
@@ -699,7 +699,7 @@ module io_input_model
      ! convert_varname_model2state(model,varname_model,varname_indice) 
      ! G. DESCOMBES
 
-     if (aero_opt.eq.1) then
+     if (chem_opt.eq.1) then
 
      varname_wrf(1)  = "DUST_1"
      varname_wrf(2)  = "DUST_2"
@@ -749,7 +749,7 @@ module io_input_model
      varname_wrf(22) = "ho"
      varname_wrf(23) = "so2"
 
-     else if (aero_opt.eq.2) then 
+     else if (chem_opt.eq.2) then 
      varname_wrf(1)  = "bc_a01"
      varname_wrf(2)  = "bc_a02"
      varname_wrf(3)  = "bc_a03"
