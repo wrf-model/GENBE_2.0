@@ -511,7 +511,8 @@ contains
        covar_ID(41,:) = covar41(:)
        covar_ID(42,:) = covar42(:)
 
-   else if (chem_opt.eq.2) then
+   end if
+   if (chem_opt.eq.2) then
 
        covar_ID(43,:) = covar43(:)
        covar_ID(44,:) = covar44(:)
