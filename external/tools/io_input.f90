@@ -60,7 +60,7 @@ module io_input
       integer :: rdVarIDds
       integer :: rdVarIDchar
 
-      integer , dimension(100) :: rdVarIDvarnd
+      integer , dimension(400) :: rdVarIDvarnd
       integer :: ivarnd
       integer :: rdVarIDvar0
 
@@ -77,7 +77,7 @@ module io_input
 
       ! namelist
       integer :: rdVarIDcovar
-      integer, dimension(100) :: rdVarIDnaml
+      integer, dimension(400) :: rdVarIDnaml
 
    end type io_input_object
 
