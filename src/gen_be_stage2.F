@@ -205,7 +205,7 @@ program gen_be_stage2
                !write(*,*)'field read ',field3d%array(10,10,10)
                ! remove 2d spatial mean
                do kk = 1, Dim3
-                  mean_field = sum(field3d%array(1:Dim1,1:Dim2,kk)) * inv_dim2d
+                  mean_field = sum(field3d%array(1:Dim1,1:Dim2,kk))/Dim1/Dim2
                   write(*,*)' sf(1:nx,1:ny,k) mean_field ', field3d%array(10,10,kk), mean_field 
                   field3d%array(:,:,kk) = field3d%array(:,:,kk) ! - mean_field
                end do

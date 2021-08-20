@@ -630,12 +630,12 @@ if ( .not. data_on_levels ) then
      do b=1, num_bins2d
      !------------------------------------------------
 
-      if (vert_ls_method.eq.1) then
-
         do k=2, nk
             if (abs(bv(k,k-1,b)) > rsmall1) vorr(k,k,b)=bv(k,k-1,b)/sqrt(bv(k-1,k-1,b)*bv(k,k,b))
         end do
         if ((bv(1,2,b).gt.rsmall1)) vorr(1,1,b)=bv(1,2,b)/sqrt(bv(1,1,b)*bv(2,2,b))
+
+      if (vert_ls_method.eq.1) then
 
          do k=1, nk
             ! if (vorr(k,k,b).gt. 1.0) vorr(k,k,b)= vorr(k-1,k-1,b)   
