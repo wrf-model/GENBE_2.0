@@ -689,6 +689,8 @@ module io_input_model
        nchem = 23
      else if (chem_opt.eq.2) then        !!! aero cv for MOSAIC + gas cv !!! 
        nchem = 36
+     else if (chem_opt.eq.3) then        !!! aero cv for MADE-VBS+gas cv !!! 
+       nchem = 39
      end if 
 
      allocate(varname_wrf(1:nchem))
@@ -823,6 +825,50 @@ module io_input_model
      varname_ind(34) = "no2"
      varname_ind(35) = "o3"
      varname_ind(36) = "co"
+
+     else if (chem_opt.eq.3) then  ! MADE-VBS (syha on Mar-17-2022)
+
+     varname_wrf(1)  = "so4aj"
+     varname_wrf(2)  = "so4ai"
+     varname_wrf(3)  = "nh4aj"
+     varname_wrf(4)  = "nh4ai"
+     varname_wrf(5)  = "no3aj"
+     varname_wrf(6)  = "no3ai"
+     varname_wrf(7)  = "naaj"
+     varname_wrf(8)  = "naai"
+     varname_wrf(9)  = "claj"
+     varname_wrf(10) = "clai"
+     varname_wrf(11) = "asoa1j"
+     varname_wrf(12) = "asoa1i"
+     varname_wrf(13) = "asoa2j"
+     varname_wrf(14) = "asoa2i"
+     varname_wrf(15) = "asoa3j"
+     varname_wrf(16) = "asoa3i"
+     varname_wrf(17) = "asoa4j"
+     varname_wrf(18) = "asoa4i"
+     varname_wrf(19) = "bsoa1j"
+     varname_wrf(20) = "bsoa1i"
+     varname_wrf(21) = "bsoa2j"
+     varname_wrf(22) = "bsoa2i"
+     varname_wrf(23) = "bsoa3j"
+     varname_wrf(24) = "bsoa3i"
+     varname_wrf(25) = "bsoa4j"
+     varname_wrf(26) = "bsoa4i"
+     varname_wrf(27) = "orgpaj"
+     varname_wrf(28) = "orgpai"
+     varname_wrf(29) = "ecj"
+     varname_wrf(30) = "eci"
+     varname_wrf(31) = "p25j"
+     varname_wrf(32) = "p25i"
+     varname_wrf(33) = "antha"
+     varname_wrf(34) = "seas"
+     varname_wrf(35) = "soila"
+     varname_wrf(36) = "so2"
+     varname_wrf(37) = "no2"
+     varname_wrf(38) = "o3"
+     varname_wrf(39) = "co"
+
+     varname_ind(1:39) = varname_wrf(1:39)
 
      end if
 
