@@ -76,7 +76,7 @@ real              :: spike_tolerance = 1.5
 
 !!!!!
 integer :: io_status
-integer, parameter :: nMaxvar = 55
+integer, parameter :: nMaxvar = 58
 integer, dimension(nMaxvar) :: covar1, covar2, covar3, covar4, covar5 
 integer, dimension(nMaxvar) :: covar6, covar7, covar8, covar9, covar10
 integer, dimension(nMaxvar) :: covar11, covar12, covar13, covar14, covar15
@@ -88,6 +88,7 @@ integer, dimension(nMaxvar) :: covar36, covar37, covar38, covar39, covar40
 integer, dimension(nMaxvar) :: covar41, covar42, covar43, covar44, covar45
 integer, dimension(nMaxvar) :: covar46, covar47, covar48, covar49, covar50
 integer, dimension(nMaxvar) :: covar51, covar52, covar53, covar54, covar55
+integer, dimension(nMaxvar) :: covar56, covar57, covar58
 integer, dimension(nMaxvar) :: ncovar, nvarce1d, ncovar_row 
 integer, dimension(nMaxvar,nMaxvar) :: covar_ID, covar_ID2 
 character (len=32), dimension(nMaxvar) :: cv_list, cv_listu, tmp_list,  tmp_list2 
@@ -175,6 +176,9 @@ namelist /gen_be_info/ model, &
                    covar53, &
                    covar54, &
                    covar55, &
+                   covar56, &
+                   covar57, &
+                   covar58, &
                    use_chol_reg
       namelist /gen_be_bin/ bin_type, &
                    lat_min, &
@@ -215,6 +219,8 @@ contains
         NVARMAX = 42
       else if (chem_opt.eq.2) then 
         NVARMAX = 55
+      else if (chem_opt.eq.3) then     ! MADE-VBS (syha on Mar-17-2022)
+        NVARMAX = 58
       end if
 
       allocate( varname_all(NVARMAX) ) 
@@ -318,6 +324,53 @@ contains
      varname_all(54) = 'ps'
      varname_all(55) = 'vis'
      vardim_all(54:55) = 2 
+
+  else if (chem_opt.eq.3) then   ! MADE-VBS (syha on Mar-17-2022)
+     varname_all(18) = 'so4aj'
+     varname_all(19) = 'so4ai'
+     varname_all(20) = 'nh4aj'
+     varname_all(21) = 'nh4ai'
+     varname_all(22) = 'no3aj'
+     varname_all(23) = 'no3ai'
+     varname_all(24) = 'naaj'
+     varname_all(25) = 'naai'
+     varname_all(26) = 'claj'
+     varname_all(27) = 'clai'
+     varname_all(28) = 'asoa1j'
+     varname_all(29) = 'asoa1i'
+     varname_all(30) = 'asoa2j'
+     varname_all(31) = 'asoa2i'
+     varname_all(32) = 'asoa3j'
+     varname_all(33) = 'asoa3i'
+     varname_all(34) = 'asoa4j'
+     varname_all(35) = 'asoa4i'
+     varname_all(36) = 'bsoa1j'
+     varname_all(37) = 'bsoa1i'
+     varname_all(38) = 'bsoa2j'
+     varname_all(39) = 'bsoa2i'
+     varname_all(40) = 'bsoa3j'
+     varname_all(41) = 'bsoa3i'
+     varname_all(42) = 'bsoa4j'
+     varname_all(43) = 'bsoa4i'
+     varname_all(44) = 'orgpaj'
+     varname_all(45) = 'orgpai'
+     varname_all(46) = 'ecj'
+     varname_all(47) = 'eci'
+     varname_all(48) = 'p25j'
+     varname_all(49) = 'p25i'
+     varname_all(50) = 'antha'
+     varname_all(51) = 'seas'
+     varname_all(52) = 'soila'
+     varname_all(53) = 'so2'
+     varname_all(54) = 'no2'
+     varname_all(55) = 'o3'
+     varname_all(56) = 'co'
+     vardim_all(18:56) = 3
+
+     varname_all(57) = 'ps'
+     varname_all(58) = 'vis'
+     vardim_all(57:58) = 2
+
   end if
 
       jj = 0
@@ -459,9 +512,9 @@ contains
           write(*,*)'change the value in configure.f90'
           stop
        end if
-      
 
        ! initialisation of covar
+
        covar_ID(1,:) = covar1(:)
        !covar_ID(1,:) = -1 
        covar_ID(2,:) = covar2(:)
@@ -512,7 +565,7 @@ contains
        covar_ID(42,:) = covar42(:)
 
    end if
-   if (chem_opt.eq.2) then
+   if (chem_opt.ge.2) then
 
        covar_ID(43,:) = covar43(:)
        covar_ID(44,:) = covar44(:)
@@ -527,7 +580,14 @@ contains
        covar_ID(53,:) = covar53(:)
        covar_ID(54,:) = covar54(:)
        covar_ID(55,:) = covar55(:)
-  end if
+   end if
+
+   if (chem_opt.ge.3) then ! MADE-VBS (syha on Mar-17-2022)
+       covar_ID(56,:) = covar55(:)
+       covar_ID(57,:) = covar55(:)
+       covar_ID(58,:) = covar55(:)
+   end if
+
        covar_ID2 = covar_ID
 
        ! prepare for dimension purpose in alloc section
